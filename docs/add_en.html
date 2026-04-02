@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Capture and revisit your moments of gratitude, joy, and inspiration throughout the year.">
+    <meta name="keywords" content="gratitude journal, joy jar, thankfulness, memories, inspiration, quotes, mindfulness">
+    <meta name="author" content="Jar of Joy">
+    <meta name="theme-color" content="#FF6B35">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Jar of Joy">
+    <meta property="og:description" content="Capture and revisit your moments of gratitude, joy, and inspiration throughout the year.">
+    <meta property="og:image" content="static/images/og-image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Jar of Joy">
+    <meta property="twitter:description" content="Capture and revisit your moments of gratitude, joy, and inspiration throughout the year.">
+    
+    <title>Add a Spark of Joy - Jar of Joy</title>
+    
+    <!-- Pure.css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="static/css/styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="static/images/favicon.svg">
+    
+    
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <h1 class="logo">
+                <a href="index_en.html">
+                    Jar of Joy
+                </a>
+            </h1>
+            <nav class="header-nav">
+                <div class="language-switcher">
+                    <select id="languageSelect" onchange="switchLanguage(this.value)">
+                        
+                        <option value="en" selected>
+                            English
+                        </option>
+                        
+                        <option value="sk" >
+                            Slovenčina
+                        </option>
+                        
+                    </select>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+        
+<div class="container add-container">
+    <section class="add-section">
+        <div class="add-header">
+            <h1 class="page-title">Add a Spark of Joy</h1>
+            <p class="page-subtitle">Capture this moment of gratitude</p>
+        </div>
+
+        <form id="addSparkForm" class="pure-form pure-form-stacked spark-form">
+            <fieldset>
+                <!-- Spark Type -->
+                <div class="form-group">
+                    <label for="sparkType">Type</label>
+                    <div class="type-selector">
+                        <label class="type-option">
+                            <input type="radio" name="sparkType" value="memory" checked>
+                            <span class="type-card">
+                                <span class="material-symbols-outlined">photo_camera</span>
+                                <span class="type-label">Memory</span>
+                            </span>
+                        </label>
+                        <label class="type-option">
+                            <input type="radio" name="sparkType" value="quote">
+                            <span class="type-card">
+                                <span class="material-symbols-outlined">format_quote</span>
+                                <span class="type-label">Quote</span>
+                            </span>
+                        </label>
+                        <label class="type-option">
+                            <input type="radio" name="sparkType" value="gratitude">
+                            <span class="type-card">
+                                <span class="material-symbols-outlined">favorite</span>
+                                <span class="type-label">Gratitude</span>
+                            </span>
+                        </label>
+                        <label class="type-option">
+                            <input type="radio" name="sparkType" value="achievement">
+                            <span class="type-card">
+                                <span class="material-symbols-outlined">emoji_events</span>
+                                <span class="type-label">Achievement</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Spark Content -->
+                <div class="form-group">
+                    <label for="sparkContent">Your Spark</label>
+                    <textarea
+                        id="sparkContent"
+                        name="sparkContent"
+                        rows="6"
+                        placeholder="What made you smile today?"
+                        required
+                        maxlength="1000"
+                    ></textarea>
+                    <span class="char-counter">
+                        <span id="charCount">0</span>/1000
+                    </span>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="material-symbols-outlined">check</span>
+                        Save Spark
+                    </button>
+                </div>
+            </fieldset>
+        </form>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message" style="display: none;">
+            <span class="material-symbols-outlined">check_circle</span>
+            <p>Spark saved successfully!</p>
+        </div>
+    </section>
+</div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index_en.html"
+           class="nav-item ">
+            <span class="material-symbols-outlined">home</span>
+            <span class="nav-label">Home</span>
+        </a>
+        <a href="reveal_en.html"
+           class="nav-item ">
+            <span class="material-symbols-outlined">auto_awesome</span>
+            <span class="nav-label">Reveal</span>
+        </a>
+        <a href="collection_en.html"
+           class="nav-item ">
+            <span class="material-symbols-outlined">auto_stories</span>
+            <span class="nav-label">Collection</span>
+        </a>
+        <a href="add_en.html"
+           class="nav-item active">
+            <span class="material-symbols-outlined">add_circle</span>
+            <span class="nav-label">Add</span>
+        </a>
+    </nav>
+
+    <!-- Core JavaScript -->
+    <script src="static/js/app.js"></script>
+    <script>
+        // Language switcher
+        function switchLanguage(lang) {
+            const currentPath = window.location.pathname;
+            const currentFile = currentPath.split('/').pop() || 'index_en.html';
+            
+            // Extract the page name (without language suffix)
+            const pageName = currentFile.replace(/_[a-z]{2}\.html$/, '');
+            
+            // Redirect to the same page in the new language
+            window.location.href = pageName + '_' + lang + '.html';
+        }
+    </script>
+    
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('addSparkForm');
+        const contentTextarea = document.getElementById('sparkContent');
+        const charCount = document.getElementById('charCount');
+        const successMessage = document.getElementById('successMessage');
+
+        // Character counter
+        contentTextarea.addEventListener('input', function() {
+            charCount.textContent = this.value.length;
+        });
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const sparkType = document.querySelector('input[name="sparkType"]:checked').value;
+            const content = contentTextarea.value.trim();
+
+            if (!content) {
+                alert('Please enter your spark content');
+                return;
+            }
+
+            const spark = {
+                id: Date.now().toString(),
+                type: sparkType,
+                content: content,
+                timestamp: new Date().toISOString()
+            };
+
+            // Save spark
+            JarOfJoy.addSpark(spark);
+
+            // Show success message
+            successMessage.style.display = 'flex';
+            form.reset();
+            charCount.textContent = '0';
+
+            // Hide success message and redirect after 2 seconds
+            setTimeout(function() {
+                successMessage.style.display = 'none';
+                window.location.href = 'index_en.html';
+            }, 2000);
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Capture and revisit your moments of gratitude, joy, and inspiration throughout the year.">
+    <meta name="keywords" content="gratitude journal, joy jar, thankfulness, memories, inspiration, quotes, mindfulness">
+    <meta name="author" content="Jar of Joy">
+    <meta name="theme-color" content="#FF6B35">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Jar of Joy">
+    <meta property="og:description" content="Capture and revisit your moments of gratitude, joy, and inspiration throughout the year.">
+    <meta property="og:image" content="static/images/og-image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Jar of Joy">
+    <meta property="twitter:description" content="Capture and revisit your moments of gratitude, joy, and inspiration throughout the year.">
+    
+    <title>Jar of Joy - Dashboard</title>
+    
+    <!-- Pure.css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="static/css/styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="static/images/favicon.svg">
+    
+    
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <h1 class="logo">
+                <a href="index_en.html">
+                    Jar of Joy
+                </a>
+            </h1>
+            <nav class="header-nav">
+                <div class="language-switcher">
+                    <select id="languageSelect" onchange="switchLanguage(this.value)">
+                        
+                        <option value="en" selected>
+                            English
+                        </option>
+                        
+                        <option value="sk" >
+                            Slovenčina
+                        </option>
+                        
+                    </select>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+        
+<div class="container dashboard-container">
+    <!-- Hero Section with Daily Quote -->
+    <section class="hero-section">
+        <div class="pure-g">
+            <div class="pure-u-1 pure-u-md-2-3">
+                <p class="section-label">Today's Reflection</p>
+                <blockquote class="daily-quote">
+                    <p class="quote-text">"Happiness is not by chance, but by choice."</p>
+                    <cite class="quote-author">— Jim Rohn</cite>
+                </blockquote>
+            </div>
+            <div class="pure-u-1 pure-u-md-1-3">
+                <div class="spark-counter">
+                    <span class="counter-number" id="sparkCount">0</span>
+                    <span class="counter-label">Sparks Collected</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Jar Visualization Section -->
+    <section class="jar-section">
+        <div class="pure-g">
+            <div class="pure-u-1 pure-u-lg-1-2">
+                <div class="jar-container">
+                    <div class="jar-glow"></div>
+                    <div class="jar">
+                        <div class="jar-lid"></div>
+                        <div class="jar-body">
+                            <div class="jar-fill" id="jarFill">
+                                <!-- Floating sparks will be added dynamically -->
+                                <div class="spark spark-1"></div>
+                                <div class="spark spark-2"></div>
+                                <div class="spark spark-3"></div>
+                                <div class="spark spark-4"></div>
+                                <div class="spark spark-5"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pure-u-1 pure-u-lg-1-2">
+                <div class="jar-info">
+                    <div class="info-card">
+                        <h2 class="jar-status" id="jarStatus">Your Jar is 0% Full</h2>
+                        <p class="jar-description">You've been capturing moments of gratitude consistently. Each spark represents a memory that made your heart smile.</p>
+                        <a href="add_en.html" class="btn btn-primary btn-large">
+                            <span class="material-symbols-outlined">auto_awesome</span>
+                            Add a Spark of Joy
+                        </a>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="material-symbols-outlined stat-icon">calendar_today</span>
+                            <p class="stat-label">Streak</p>
+                            <p class="stat-value" id="streakDays">0  Days</p>
+                        </div>
+                        <div class="stat-card">
+                            <span class="material-symbols-outlined stat-icon">favorite</span>
+                            <p class="stat-label">Joy Level</p>
+                            <p class="stat-value">Radiant</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Sparks Section -->
+    <section class="recent-section">
+        <div class="section-header">
+            <h2 class="section-title">Recent Sparks</h2>
+            <a href="collection_en.html" class="link-primary">
+                View Collection →
+            </a>
+        </div>
+        
+        <div id="recentSparks" class="sparks-grid">
+            <!-- Recent sparks will be loaded dynamically -->
+            <div class="empty-state">
+                <span class="material-symbols-outlined empty-icon">auto_awesome</span>
+                <p>Your jar is empty. Start adding sparks of joy!</p>
+                <a href="add_en.html" class="btn btn-secondary">
+                    Add a Spark of Joy
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index_en.html"
+           class="nav-item active">
+            <span class="material-symbols-outlined">home</span>
+            <span class="nav-label">Home</span>
+        </a>
+        <a href="reveal_en.html"
+           class="nav-item ">
+            <span class="material-symbols-outlined">auto_awesome</span>
+            <span class="nav-label">Reveal</span>
+        </a>
+        <a href="collection_en.html"
+           class="nav-item ">
+            <span class="material-symbols-outlined">auto_stories</span>
+            <span class="nav-label">Collection</span>
+        </a>
+        <a href="add_en.html"
+           class="nav-item ">
+            <span class="material-symbols-outlined">add_circle</span>
+            <span class="nav-label">Add</span>
+        </a>
+    </nav>
+
+    <!-- Core JavaScript -->
+    <script src="static/js/app.js"></script>
+    <script>
+        // Language switcher
+        function switchLanguage(lang) {
+            const currentPath = window.location.pathname;
+            const currentFile = currentPath.split('/').pop() || 'index_en.html';
+            
+            // Extract the page name (without language suffix)
+            const pageName = currentFile.replace(/_[a-z]{2}\.html$/, '');
+            
+            // Redirect to the same page in the new language
+            window.location.href = pageName + '_' + lang + '.html';
+        }
+    </script>
+    
+<script>
+    // Dashboard specific JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+        loadDashboard();
+    });
+
+    function loadDashboard() {
+        const sparks = JarOfJoy.getSparks();
+        const sparkCount = sparks.length;
+        
+        // Update spark count
+        document.getElementById('sparkCount').textContent = sparkCount;
+        
+        // Update jar fill percentage
+        const maxSparks = 100;
+        const fillPercent = Math.min((sparkCount / maxSparks) * 100, 100);
+        const jarFill = document.getElementById('jarFill');
+        jarFill.style.height = fillPercent + '%';
+        
+        // Update jar status text
+        const jarStatus = document.getElementById('jarStatus');
+        jarStatus.textContent = 'Your Jar is {percent}% Full'.replace('{percent}', Math.round(fillPercent));
+        
+        // Calculate streak
+        const streak = JarOfJoy.calculateStreak();
+        document.getElementById('streakDays').textContent = streak + '  Days';
+        
+        // Load recent sparks
+        loadRecentSparks(sparks);
+    }
+
+    function loadRecentSparks(sparks) {
+        const container = document.getElementById('recentSparks');
+        
+        if (sparks.length === 0) {
+            return; // Show empty state
+        }
+        
+        container.innerHTML = '';
+        
+        // Get last 3 sparks
+        const recentSparks = sparks.slice(-3).reverse();
+        
+        recentSparks.forEach(spark => {
+            const sparkCard = createSparkCard(spark);
+            container.appendChild(sparkCard);
+        });
+    }
+
+    function createSparkCard(spark) {
+        const card = document.createElement('div');
+        card.className = 'spark-card';
+        
+        const date = new Date(spark.timestamp);
+        const formattedDate = date.toLocaleDateString('en', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        const typeIcons = {
+            memory: 'photo_camera',
+            quote: 'format_quote',
+            gratitude: 'favorite',
+            achievement: 'emoji_events'
+        };
+        
+        card.innerHTML = `
+            <div class="spark-card-header">
+                <span class="spark-date">${formattedDate}</span>
+                <span class="material-symbols-outlined spark-type-icon">${typeIcons[spark.type] || 'auto_awesome'}</span>
+            </div>
+            <p class="spark-content">${escapeHtml(spark.content)}</p>
+        `;
+        
+        return card;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
+
+</body>
+</html>

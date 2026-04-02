@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Capture and revisit your moments of gratitude, joy, and inspiration throughout the year.">
+    <meta name="keywords" content="gratitude journal, joy jar, thankfulness, memories, inspiration, quotes, mindfulness">
+    <meta name="author" content="Jar of Joy">
+    <meta name="theme-color" content="#FF6B35">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Jar of Joy">
+    <meta property="og:description" content="Capture and revisit your moments of gratitude, joy, and inspiration throughout the year.">
+    <meta property="og:image" content="static/images/og-image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Jar of Joy">
+    <meta property="twitter:description" content="Capture and revisit your moments of gratitude, joy, and inspiration throughout the year.">
+    
+    <title>Your Collection - Jar of Joy</title>
+    
+    <!-- Pure.css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="static/css/styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="static/images/favicon.svg">
+    
+    
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <h1 class="logo">
+                <a href="index_en.html">
+                    Jar of Joy
+                </a>
+            </h1>
+            <nav class="header-nav">
+                <div class="language-switcher">
+                    <select id="languageSelect" onchange="switchLanguage(this.value)">
+                        
+                        <option value="en" selected>
+                            English
+                        </option>
+                        
+                        <option value="sk" >
+                            Slovenčina
+                        </option>
+                        
+                    </select>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+        
+<div class="container collection-container">
+    <section class="collection-section">
+        <div class="collection-header">
+            <div>
+                <h1 class="page-title">Your Collection</h1>
+                <p class="page-subtitle">All your sparks of joy</p>
+            </div>
+            <div class="collection-stats">
+                <span class="stat-badge">
+                    <span class="material-symbols-outlined">auto_awesome</span>
+                    <span id="totalCount">0</span> sparks
+                </span>
+            </div>
+        </div>
+
+        <!-- Filters and Search -->
+        <div class="collection-controls">
+            <div class="search-box">
+                <span class="material-symbols-outlined">search</span>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Search your sparks..."
+                >
+            </div>
+
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label>Type:</label>
+                    <div class="filter-buttons" id="typeFilters">
+                        <button class="filter-btn active" data-type="all">All</button>
+                        <button class="filter-btn" data-type="memory">Memories</button>
+                        <button class="filter-btn" data-type="quote">Quotes</button>
+                        <button class="filter-btn" data-type="gratitude">Gratitude</button>
+                        <button class="filter-btn" data-type="achievement">Achievements</button>
+                    </div>
+                </div>
+
+                <div class="sort-group">
+                    <label for="sortSelect">Sort:</label>
+                    <select id="sortSelect" class="sort-select">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="random">Random</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backup Instructions -->
+        <!-- <div class="backup-info-section">
+            <div class="info-card">
+                <h3>
+                    <span class="material-symbols-outlined">backup</span>
+                    How to Backup Your Data
+                </h3>
+                <p>Your sparks are stored locally in your browser. To backup your data, open your browser's Developer Tools (F12), go to Application/Storage tab, find Local Storage, and copy the "jar-of-joy-sparks" data. Save it to a text file for safekeeping.</p>
+            </div>
+        </div> -->
+
+        <!-- Collection Grid -->
+        <div id="collectionGrid" class="collection-grid">
+            <!-- Sparks will be loaded dynamically -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <span class="material-symbols-outlined empty-icon">auto_awesome</span>
+            <p>No sparks found</p>
+        </div>
+    </section>
+
+    <!-- Spark Detail Modal -->
+    <div id="sparkModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            
+            <div class="modal-body">
+                <div class="modal-header">
+                    <span class="spark-type-badge" id="modalTypeBadge">
+                        <span class="material-symbols-outlined" id="modalTypeIcon"></span>
+                        <span id="modalTypeLabel"></span>
+                    </span>
+                    <span class="spark-date" id="modalDate"></span>
+                </div>
+
+                <div class="modal-text">
+                    <blockquote id="modalText"></blockquote>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-danger" onclick="deleteSpark()">
+                        <span class="material-symbols-outlined">delete</span>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index_en.html"
+           class="nav-item ">
+            <span class="material-symbols-outlined">home</span>
+            <span class="nav-label">Home</span>
+        </a>
+        <a href="reveal_en.html"
+           class="nav-item ">
+            <span class="material-symbols-outlined">auto_awesome</span>
+            <span class="nav-label">Reveal</span>
+        </a>
+        <a href="collection_en.html"
+           class="nav-item active">
+            <span class="material-symbols-outlined">auto_stories</span>
+            <span class="nav-label">Collection</span>
+        </a>
+        <a href="add_en.html"
+           class="nav-item ">
+            <span class="material-symbols-outlined">add_circle</span>
+            <span class="nav-label">Add</span>
+        </a>
+    </nav>
+
+    <!-- Core JavaScript -->
+    <script src="static/js/app.js"></script>
+    <script>
+        // Language switcher
+        function switchLanguage(lang) {
+            const currentPath = window.location.pathname;
+            const currentFile = currentPath.split('/').pop() || 'index_en.html';
+            
+            // Extract the page name (without language suffix)
+            const pageName = currentFile.replace(/_[a-z]{2}\.html$/, '');
+            
+            // Redirect to the same page in the new language
+            window.location.href = pageName + '_' + lang + '.html';
+        }
+    </script>
+    
+<script>
+    let allSparks = [];
+    let filteredSparks = [];
+    let currentFilter = 'all';
+    let currentSort = 'newest';
+    let currentSparkId = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadCollection();
+        setupEventListeners();
+    });
+
+    function setupEventListeners() {
+        // Search
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            filterAndDisplaySparks();
+        });
+
+        // Type filters
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.type;
+                filterAndDisplaySparks();
+            });
+        });
+
+        // Sort
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            currentSort = this.value;
+            filterAndDisplaySparks();
+        });
+    }
+
+    function loadCollection() {
+        allSparks = JarOfJoy.getSparks();
+        document.getElementById('totalCount').textContent = allSparks.length;
+        filterAndDisplaySparks();
+    }
+
+    function filterAndDisplaySparks() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
+        // Filter by type
+        filteredSparks = currentFilter === 'all' 
+            ? [...allSparks]
+            : allSparks.filter(spark => spark.type === currentFilter);
+
+        // Filter by search term
+        if (searchTerm) {
+            filteredSparks = filteredSparks.filter(spark =>
+                spark.content.toLowerCase().includes(searchTerm)
+            );
+        }
+
+        // Sort
+        sortSparks(filteredSparks);
+
+        // Display
+        displaySparks(filteredSparks);
+    }
+
+    function sortSparks(sparks) {
+        switch(currentSort) {
+            case 'newest':
+                sparks.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                break;
+            case 'oldest':
+                sparks.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                break;
+            case 'random':
+                sparks.sort(() => Math.random() - 0.5);
+                break;
+        }
+    }
+
+    function displaySparks(sparks) {
+        const grid = document.getElementById('collectionGrid');
+        const emptyState = document.getElementById('emptyState');
+
+        if (sparks.length === 0) {
+            grid.style.display = 'none';
+            emptyState.style.display = 'flex';
+            return;
+        }
+
+        grid.style.display = 'grid';
+        emptyState.style.display = 'none';
+        grid.innerHTML = '';
+
+        sparks.forEach(spark => {
+            const card = createCollectionCard(spark);
+            grid.appendChild(card);
+        });
+    }
+
+    function createCollectionCard(spark) {
+        const card = document.createElement('div');
+        card.className = 'collection-card';
+        card.onclick = () => openModal(spark);
+
+        const date = new Date(spark.timestamp);
+        const formattedDate = date.toLocaleDateString('en', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+
+        const typeIcons = {
+            memory: 'photo_camera',
+            quote: 'format_quote',
+            gratitude: 'favorite',
+            achievement: 'emoji_events'
+        };
+
+        const truncatedContent = spark.content.length > 150 
+            ? spark.content.substring(0, 150) + '...'
+            : spark.content;
+
+        card.innerHTML = `
+            <div class="card-content">
+                <div class="card-header">
+                    <span class="material-symbols-outlined card-icon">${typeIcons[spark.type] || 'auto_awesome'}</span>
+                    <span class="card-date">${formattedDate}</span>
+                </div>
+                <p class="card-text">${escapeHtml(truncatedContent)}</p>
+            </div>
+        `;
+
+        return card;
+    }
+
+    function openModal(spark) {
+        currentSparkId = spark.id;
+        const modal = document.getElementById('sparkModal');
+
+        const typeIcons = {
+            memory: 'photo_camera',
+            quote: 'format_quote',
+            gratitude: 'favorite',
+            achievement: 'emoji_events'
+        };
+
+        const typeLabels = {
+            memory: 'Memory',
+            quote: 'Quote',
+            gratitude: 'Gratitude',
+            achievement: 'Achievement'
+        };
+
+        // Update modal content
+        document.getElementById('modalTypeIcon').textContent = typeIcons[spark.type] || 'auto_awesome';
+        document.getElementById('modalTypeLabel').textContent = typeLabels[spark.type] || spark.type;
+
+        const date = new Date(spark.timestamp);
+        const formattedDate = date.toLocaleDateString('en', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        document.getElementById('modalDate').textContent = formattedDate;
+
+        document.getElementById('modalText').textContent = spark.content;
+
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        document.getElementById('sparkModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+        currentSparkId = null;
+    }
+
+    function deleteSpark() {
+        if (!currentSparkId) return;
+
+        if (confirm('Are you sure? This cannot be undone.')) {
+            JarOfJoy.deleteSpark(currentSparkId);
+            closeModal();
+            loadCollection();
+        }
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
+
+</body>
+</html>

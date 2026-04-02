@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Capture and revisit your moments of gratitude, joy, and inspiration throughout the year.">
+    <meta name="keywords" content="gratitude journal, joy jar, thankfulness, memories, inspiration, quotes, mindfulness">
+    <meta name="author" content="Jar of Joy">
+    <meta name="theme-color" content="#FF6B35">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Jar of Joy">
+    <meta property="og:description" content="Capture and revisit your moments of gratitude, joy, and inspiration throughout the year.">
+    <meta property="og:image" content="static/images/og-image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Jar of Joy">
+    <meta property="twitter:description" content="Capture and revisit your moments of gratitude, joy, and inspiration throughout the year.">
+    
+    <title>Moment of Reflection - Jar of Joy</title>
+    
+    <!-- Pure.css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="static/css/styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="static/images/favicon.svg">
+    
+    
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <h1 class="logo">
+                <a href="index_en.html">
+                    Jar of Joy
+                </a>
+            </h1>
+            <nav class="header-nav">
+                <div class="language-switcher">
+                    <select id="languageSelect" onchange="switchLanguage(this.value)">
+                        
+                        <option value="en" selected>
+                            English
+                        </option>
+                        
+                        <option value="sk" >
+                            Slovenčina
+                        </option>
+                        
+                    </select>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+        
+<div class="container reveal-container">
+    <section class="reveal-section">
+        <div class="reveal-header">
+            <h1 class="page-title">Moment of Reflection</h1>
+            <p class="page-subtitle">Rediscover a spark from your collection</p>
+        </div>
+
+        <div id="revealContent" class="reveal-content">
+            <!-- Empty state -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <span class="material-symbols-outlined empty-icon">auto_awesome</span>
+                <p>Your jar is empty. Start adding sparks of joy!</p>
+                <a href="add_en.html" class="btn btn-primary">
+                    Add a Spark of Joy
+                </a>
+            </div>
+
+            <!-- Spark reveal card -->
+            <div id="sparkCard" class="spark-reveal-card" style="display: none;">
+                <div class="spark-reveal-header">
+                    <span class="spark-type-badge" id="sparkTypeBadge">
+                        <span class="material-symbols-outlined" id="sparkTypeIcon"></span>
+                        <span id="sparkTypeLabel"></span>
+                    </span>
+                    <span class="spark-date" id="sparkDate"></span>
+                </div>
+
+                <div class="spark-reveal-content">
+                    <blockquote class="spark-text" id="sparkText"></blockquote>
+                </div>
+
+                <div class="spark-reveal-actions">
+                    <button class="btn btn-secondary" onclick="revealAnotherSpark()">
+                        <span class="material-symbols-outlined">refresh</span>
+                        Reveal Another
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating particles animation -->
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+    </section>
+</div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index_en.html"
+           class="nav-item ">
+            <span class="material-symbols-outlined">home</span>
+            <span class="nav-label">Home</span>
+        </a>
+        <a href="reveal_en.html"
+           class="nav-item active">
+            <span class="material-symbols-outlined">auto_awesome</span>
+            <span class="nav-label">Reveal</span>
+        </a>
+        <a href="collection_en.html"
+           class="nav-item ">
+            <span class="material-symbols-outlined">auto_stories</span>
+            <span class="nav-label">Collection</span>
+        </a>
+        <a href="add_en.html"
+           class="nav-item ">
+            <span class="material-symbols-outlined">add_circle</span>
+            <span class="nav-label">Add</span>
+        </a>
+    </nav>
+
+    <!-- Core JavaScript -->
+    <script src="static/js/app.js"></script>
+    <script>
+        // Language switcher
+        function switchLanguage(lang) {
+            const currentPath = window.location.pathname;
+            const currentFile = currentPath.split('/').pop() || 'index_en.html';
+            
+            // Extract the page name (without language suffix)
+            const pageName = currentFile.replace(/_[a-z]{2}\.html$/, '');
+            
+            // Redirect to the same page in the new language
+            window.location.href = pageName + '_' + lang + '.html';
+        }
+    </script>
+    
+<script>
+    let currentSparkIndex = -1;
+    let availableSparks = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadRandomSpark();
+    });
+
+    function loadRandomSpark() {
+        const sparks = JarOfJoy.getSparks();
+        const emptyState = document.getElementById('emptyState');
+        const sparkCard = document.getElementById('sparkCard');
+
+        if (sparks.length === 0) {
+            emptyState.style.display = 'flex';
+            sparkCard.style.display = 'none';
+            return;
+        }
+
+        emptyState.style.display = 'none';
+        sparkCard.style.display = 'block';
+
+        // Get random spark
+        const randomIndex = Math.floor(Math.random() * sparks.length);
+        const spark = sparks[randomIndex];
+        currentSparkIndex = randomIndex;
+
+        displaySpark(spark);
+    }
+
+    function revealAnotherSpark() {
+        // Add fade out animation
+        const sparkCard = document.getElementById('sparkCard');
+        sparkCard.style.opacity = '0';
+        sparkCard.style.transform = 'scale(0.95)';
+
+        setTimeout(() => {
+            loadRandomSpark();
+            sparkCard.style.opacity = '1';
+            sparkCard.style.transform = 'scale(1)';
+        }, 300);
+    }
+
+    function displaySpark(spark) {
+        const typeIcons = {
+            memory: 'photo_camera',
+            quote: 'format_quote',
+            gratitude: 'favorite',
+            achievement: 'emoji_events'
+        };
+
+        const typeLabels = {
+            memory: 'Memory',
+            quote: 'Quote',
+            gratitude: 'Gratitude',
+            achievement: 'Achievement'
+        };
+
+        // Update type badge
+        document.getElementById('sparkTypeIcon').textContent = typeIcons[spark.type] || 'auto_awesome';
+        document.getElementById('sparkTypeLabel').textContent = typeLabels[spark.type] || spark.type;
+
+        // Update date
+        const date = new Date(spark.timestamp);
+        const formattedDate = date.toLocaleDateString('en', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        document.getElementById('sparkDate').textContent = 'Captured on ' + formattedDate;
+
+        // Update content
+        document.getElementById('sparkText').textContent = spark.content;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
+
+</body>
+</html>
