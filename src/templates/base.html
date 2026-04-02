@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ lang_dir }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ t.site_description }}">
+    <meta name="keywords" content="{{ t.site_keywords }}">
+    <meta name="author" content="Jar of Joy">
+    <meta name="theme-color" content="#FF6B35">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ t.site_title }}">
+    <meta property="og:description" content="{{ t.site_description }}">
+    <meta property="og:image" content="{{ 'static/images/og-image.png' }}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="{{ t.site_title }}">
+    <meta property="twitter:description" content="{{ t.site_description }}">
+    
+    <title>{% block title %}{{ t.site_title }}{% endblock %}</title>
+    
+    <!-- Pure.css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="static/css/styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="static/images/favicon.svg">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <h1 class="logo">
+                <a href="index_{{ current_lang }}.html">
+                    {{ t.site_title }}
+                </a>
+            </h1>
+            <nav class="header-nav">
+                <div class="language-switcher">
+                    <select id="languageSelect" onchange="switchLanguage(this.value)">
+                        {% for code, lang in languages.items() %}
+                        <option value="{{ code }}" {% if code == current_lang %}selected{% endif %}>
+                            {{ lang.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index_{{ current_lang }}.html"
+           class="nav-item {% block nav_home %}{% endblock %}">
+            <span class="material-symbols-outlined">home</span>
+            <span class="nav-label">{{ t.nav_home }}</span>
+        </a>
+        <a href="reveal_{{ current_lang }}.html"
+           class="nav-item {% block nav_reveal %}{% endblock %}">
+            <span class="material-symbols-outlined">auto_awesome</span>
+            <span class="nav-label">{{ t.nav_reveal }}</span>
+        </a>
+        <a href="collection_{{ current_lang }}.html"
+           class="nav-item {% block nav_collection %}{% endblock %}">
+            <span class="material-symbols-outlined">auto_stories</span>
+            <span class="nav-label">{{ t.nav_collection }}</span>
+        </a>
+        <a href="add_{{ current_lang }}.html"
+           class="nav-item {% block nav_add %}{% endblock %}">
+            <span class="material-symbols-outlined">add_circle</span>
+            <span class="nav-label">{{ t.nav_add }}</span>
+        </a>
+    </nav>
+
+    <!-- Core JavaScript -->
+    <script src="static/js/app.js"></script>
+    <script>
+        // Language switcher
+        function switchLanguage(lang) {
+            const currentPath = window.location.pathname;
+            const currentFile = currentPath.split('/').pop() || 'index_{{ current_lang }}.html';
+            
+            // Extract the page name (without language suffix)
+            const pageName = currentFile.replace(/_[a-z]{2}\.html$/, '');
+            
+            // Redirect to the same page in the new language
+            window.location.href = pageName + '_' + lang + '.html';
+        }
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

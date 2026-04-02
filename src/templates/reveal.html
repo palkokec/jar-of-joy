@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t.reveal_title }} - {{ t.site_title }}{% endblock %}
+{% block nav_reveal %}active{% endblock %}
+
+{% block content %}
+<div class="container reveal-container">
+    <section class="reveal-section">
+        <div class="reveal-header">
+            <h1 class="page-title">{{ t.reveal_title }}</h1>
+            <p class="page-subtitle">{{ t.reveal_subtitle }}</p>
+        </div>
+
+        <div id="revealContent" class="reveal-content">
+            <!-- Empty state -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <span class="material-symbols-outlined empty-icon">auto_awesome</span>
+                <p>{{ t.no_sparks }}</p>
+                <a href="add_{{ current_lang }}.html" class="btn btn-primary">
+                    {{ t.add_spark_button }}
+                </a>
+            </div>
+
+            <!-- Spark reveal card -->
+            <div id="sparkCard" class="spark-reveal-card" style="display: none;">
+                <div class="spark-reveal-header">
+                    <span class="spark-type-badge" id="sparkTypeBadge">
+                        <span class="material-symbols-outlined" id="sparkTypeIcon"></span>
+                        <span id="sparkTypeLabel"></span>
+                    </span>
+                    <span class="spark-date" id="sparkDate"></span>
+                </div>
+
+                <div class="spark-reveal-content">
+                    <blockquote class="spark-text" id="sparkText"></blockquote>
+                </div>
+
+                <div class="spark-reveal-actions">
+                    <button class="btn btn-secondary" onclick="revealAnotherSpark()">
+                        <span class="material-symbols-outlined">refresh</span>
+                        {{ t.reveal_button }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating particles animation -->
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let currentSparkIndex = -1;
+    let availableSparks = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadRandomSpark();
+    });
+
+    function loadRandomSpark() {
+        const sparks = JarOfJoy.getSparks();
+        const emptyState = document.getElementById('emptyState');
+        const sparkCard = document.getElementById('sparkCard');
+
+        if (sparks.length === 0) {
+            emptyState.style.display = 'flex';
+            sparkCard.style.display = 'none';
+            return;
+        }
+
+        emptyState.style.display = 'none';
+        sparkCard.style.display = 'block';
+
+        // Get random spark
+        const randomIndex = Math.floor(Math.random() * sparks.length);
+        const spark = sparks[randomIndex];
+        currentSparkIndex = randomIndex;
+
+        displaySpark(spark);
+    }
+
+    function revealAnotherSpark() {
+        // Add fade out animation
+        const sparkCard = document.getElementById('sparkCard');
+        sparkCard.style.opacity = '0';
+        sparkCard.style.transform = 'scale(0.95)';
+
+        setTimeout(() => {
+            loadRandomSpark();
+            sparkCard.style.opacity = '1';
+            sparkCard.style.transform = 'scale(1)';
+        }, 300);
+    }
+
+    function displaySpark(spark) {
+        const typeIcons = {
+            memory: 'photo_camera',
+            quote: 'format_quote',
+            gratitude: 'favorite',
+            achievement: 'emoji_events'
+        };
+
+        const typeLabels = {
+            memory: '{{ t.spark_type_memory }}',
+            quote: '{{ t.spark_type_quote }}',
+            gratitude: '{{ t.spark_type_gratitude }}',
+            achievement: '{{ t.spark_type_achievement }}'
+        };
+
+        // Update type badge
+        document.getElementById('sparkTypeIcon').textContent = typeIcons[spark.type] || 'auto_awesome';
+        document.getElementById('sparkTypeLabel').textContent = typeLabels[spark.type] || spark.type;
+
+        // Update date
+        const date = new Date(spark.timestamp);
+        const formattedDate = date.toLocaleDateString('{{ lang }}', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        document.getElementById('sparkDate').textContent = '{{ t.reveal_date }} ' + formattedDate;
+
+        // Update content
+        document.getElementById('sparkText').textContent = spark.content;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
+{% endblock %}

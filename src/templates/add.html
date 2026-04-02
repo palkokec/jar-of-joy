@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t.add_spark_title }} - {{ t.site_title }}{% endblock %}
+{% block nav_add %}active{% endblock %}
+
+{% block content %}
+<div class="container add-container">
+    <section class="add-section">
+        <div class="add-header">
+            <h1 class="page-title">{{ t.add_spark_title }}</h1>
+            <p class="page-subtitle">{{ t.add_spark_subtitle }}</p>
+        </div>
+
+        <form id="addSparkForm" class="pure-form pure-form-stacked spark-form">
+            <fieldset>
+                <!-- Spark Type -->
+                <div class="form-group">
+                    <label for="sparkType">{{ t.spark_type_label }}</label>
+                    <div class="type-selector">
+                        <label class="type-option">
+                            <input type="radio" name="sparkType" value="memory" checked>
+                            <span class="type-card">
+                                <span class="material-symbols-outlined">photo_camera</span>
+                                <span class="type-label">{{ t.spark_type_memory }}</span>
+                            </span>
+                        </label>
+                        <label class="type-option">
+                            <input type="radio" name="sparkType" value="quote">
+                            <span class="type-card">
+                                <span class="material-symbols-outlined">format_quote</span>
+                                <span class="type-label">{{ t.spark_type_quote }}</span>
+                            </span>
+                        </label>
+                        <label class="type-option">
+                            <input type="radio" name="sparkType" value="gratitude">
+                            <span class="type-card">
+                                <span class="material-symbols-outlined">favorite</span>
+                                <span class="type-label">{{ t.spark_type_gratitude }}</span>
+                            </span>
+                        </label>
+                        <label class="type-option">
+                            <input type="radio" name="sparkType" value="achievement">
+                            <span class="type-card">
+                                <span class="material-symbols-outlined">emoji_events</span>
+                                <span class="type-label">{{ t.spark_type_achievement }}</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Spark Content -->
+                <div class="form-group">
+                    <label for="sparkContent">{{ t.spark_content_label }}</label>
+                    <textarea
+                        id="sparkContent"
+                        name="sparkContent"
+                        rows="6"
+                        placeholder="{{ t.spark_content_placeholder }}"
+                        required
+                        maxlength="1000"
+                    ></textarea>
+                    <span class="char-counter">
+                        <span id="charCount">0</span>/1000
+                    </span>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                        {{ t.cancel }}
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="material-symbols-outlined">check</span>
+                        {{ t.save_spark }}
+                    </button>
+                </div>
+            </fieldset>
+        </form>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message" style="display: none;">
+            <span class="material-symbols-outlined">check_circle</span>
+            <p>Spark saved successfully!</p>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('addSparkForm');
+        const contentTextarea = document.getElementById('sparkContent');
+        const charCount = document.getElementById('charCount');
+        const successMessage = document.getElementById('successMessage');
+
+        // Character counter
+        contentTextarea.addEventListener('input', function() {
+            charCount.textContent = this.value.length;
+        });
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const sparkType = document.querySelector('input[name="sparkType"]:checked').value;
+            const content = contentTextarea.value.trim();
+
+            if (!content) {
+                alert('Please enter your spark content');
+                return;
+            }
+
+            const spark = {
+                id: Date.now().toString(),
+                type: sparkType,
+                content: content,
+                timestamp: new Date().toISOString()
+            };
+
+            // Save spark
+            JarOfJoy.addSpark(spark);
+
+            // Show success message
+            successMessage.style.display = 'flex';
+            form.reset();
+            charCount.textContent = '0';
+
+            // Hide success message and redirect after 2 seconds
+            setTimeout(function() {
+                successMessage.style.display = 'none';
+                window.location.href = 'index_{{ current_lang }}.html';
+            }, 2000);
+        });
+    });
+</script>
+{% endblock %}

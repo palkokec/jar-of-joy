@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t.collection_title }} - {{ t.site_title }}{% endblock %}
+{% block nav_collection %}active{% endblock %}
+
+{% block content %}
+<div class="container collection-container">
+    <section class="collection-section">
+        <div class="collection-header">
+            <div>
+                <h1 class="page-title">{{ t.collection_title }}</h1>
+                <p class="page-subtitle">{{ t.collection_subtitle }}</p>
+            </div>
+            <div class="collection-stats">
+                <span class="stat-badge">
+                    <span class="material-symbols-outlined">auto_awesome</span>
+                    <span id="totalCount">0</span> sparks
+                </span>
+            </div>
+        </div>
+
+        <!-- Filters and Search -->
+        <div class="collection-controls">
+            <div class="search-box">
+                <span class="material-symbols-outlined">search</span>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="{{ t.search_placeholder }}"
+                >
+            </div>
+
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label>{{ t.spark_type_label }}:</label>
+                    <div class="filter-buttons" id="typeFilters">
+                        <button class="filter-btn active" data-type="all">{{ t.filter_all }}</button>
+                        <button class="filter-btn" data-type="memory">{{ t.filter_memory }}</button>
+                        <button class="filter-btn" data-type="quote">{{ t.filter_quote }}</button>
+                        <button class="filter-btn" data-type="gratitude">{{ t.filter_gratitude }}</button>
+                        <button class="filter-btn" data-type="achievement">{{ t.filter_achievement }}</button>
+                    </div>
+                </div>
+
+                <div class="sort-group">
+                    <label for="sortSelect">Sort:</label>
+                    <select id="sortSelect" class="sort-select">
+                        <option value="newest">{{ t.sort_newest }}</option>
+                        <option value="oldest">{{ t.sort_oldest }}</option>
+                        <option value="random">{{ t.sort_random }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backup Instructions -->
+        <!-- <div class="backup-info-section">
+            <div class="info-card">
+                <h3>
+                    <span class="material-symbols-outlined">backup</span>
+                    {{ t.backup_info_title }}
+                </h3>
+                <p>{{ t.backup_info_text }}</p>
+            </div>
+        </div> -->
+
+        <!-- Collection Grid -->
+        <div id="collectionGrid" class="collection-grid">
+            <!-- Sparks will be loaded dynamically -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <span class="material-symbols-outlined empty-icon">auto_awesome</span>
+            <p>{{ t.empty_collection }}</p>
+        </div>
+    </section>
+
+    <!-- Spark Detail Modal -->
+    <div id="sparkModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            
+            <div class="modal-body">
+                <div class="modal-header">
+                    <span class="spark-type-badge" id="modalTypeBadge">
+                        <span class="material-symbols-outlined" id="modalTypeIcon"></span>
+                        <span id="modalTypeLabel"></span>
+                    </span>
+                    <span class="spark-date" id="modalDate"></span>
+                </div>
+
+                <div class="modal-text">
+                    <blockquote id="modalText"></blockquote>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-danger" onclick="deleteSpark()">
+                        <span class="material-symbols-outlined">delete</span>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let allSparks = [];
+    let filteredSparks = [];
+    let currentFilter = 'all';
+    let currentSort = 'newest';
+    let currentSparkId = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadCollection();
+        setupEventListeners();
+    });
+
+    function setupEventListeners() {
+        // Search
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            filterAndDisplaySparks();
+        });
+
+        // Type filters
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.type;
+                filterAndDisplaySparks();
+            });
+        });
+
+        // Sort
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            currentSort = this.value;
+            filterAndDisplaySparks();
+        });
+    }
+
+    function loadCollection() {
+        allSparks = JarOfJoy.getSparks();
+        document.getElementById('totalCount').textContent = allSparks.length;
+        filterAndDisplaySparks();
+    }
+
+    function filterAndDisplaySparks() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
+        // Filter by type
+        filteredSparks = currentFilter === 'all' 
+            ? [...allSparks]
+            : allSparks.filter(spark => spark.type === currentFilter);
+
+        // Filter by search term
+        if (searchTerm) {
+            filteredSparks = filteredSparks.filter(spark =>
+                spark.content.toLowerCase().includes(searchTerm)
+            );
+        }
+
+        // Sort
+        sortSparks(filteredSparks);
+
+        // Display
+        displaySparks(filteredSparks);
+    }
+
+    function sortSparks(sparks) {
+        switch(currentSort) {
+            case 'newest':
+                sparks.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                break;
+            case 'oldest':
+                sparks.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                break;
+            case 'random':
+                sparks.sort(() => Math.random() - 0.5);
+                break;
+        }
+    }
+
+    function displaySparks(sparks) {
+        const grid = document.getElementById('collectionGrid');
+        const emptyState = document.getElementById('emptyState');
+
+        if (sparks.length === 0) {
+            grid.style.display = 'none';
+            emptyState.style.display = 'flex';
+            return;
+        }
+
+        grid.style.display = 'grid';
+        emptyState.style.display = 'none';
+        grid.innerHTML = '';
+
+        sparks.forEach(spark => {
+            const card = createCollectionCard(spark);
+            grid.appendChild(card);
+        });
+    }
+
+    function createCollectionCard(spark) {
+        const card = document.createElement('div');
+        card.className = 'collection-card';
+        card.onclick = () => openModal(spark);
+
+        const date = new Date(spark.timestamp);
+        const formattedDate = date.toLocaleDateString('{{ lang }}', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+
+        const typeIcons = {
+            memory: 'photo_camera',
+            quote: 'format_quote',
+            gratitude: 'favorite',
+            achievement: 'emoji_events'
+        };
+
+        const truncatedContent = spark.content.length > 150 
+            ? spark.content.substring(0, 150) + '...'
+            : spark.content;
+
+        card.innerHTML = `
+            <div class="card-content">
+                <div class="card-header">
+                    <span class="material-symbols-outlined card-icon">${typeIcons[spark.type] || 'auto_awesome'}</span>
+                    <span class="card-date">${formattedDate}</span>
+                </div>
+                <p class="card-text">${escapeHtml(truncatedContent)}</p>
+            </div>
+        `;
+
+        return card;
+    }
+
+    function openModal(spark) {
+        currentSparkId = spark.id;
+        const modal = document.getElementById('sparkModal');
+
+        const typeIcons = {
+            memory: 'photo_camera',
+            quote: 'format_quote',
+            gratitude: 'favorite',
+            achievement: 'emoji_events'
+        };
+
+        const typeLabels = {
+            memory: '{{ t.spark_type_memory }}',
+            quote: '{{ t.spark_type_quote }}',
+            gratitude: '{{ t.spark_type_gratitude }}',
+            achievement: '{{ t.spark_type_achievement }}'
+        };
+
+        // Update modal content
+        document.getElementById('modalTypeIcon').textContent = typeIcons[spark.type] || 'auto_awesome';
+        document.getElementById('modalTypeLabel').textContent = typeLabels[spark.type] || spark.type;
+
+        const date = new Date(spark.timestamp);
+        const formattedDate = date.toLocaleDateString('{{ lang }}', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        document.getElementById('modalDate').textContent = formattedDate;
+
+        document.getElementById('modalText').textContent = spark.content;
+
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        document.getElementById('sparkModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+        currentSparkId = null;
+    }
+
+    function deleteSpark() {
+        if (!currentSparkId) return;
+
+        if (confirm('{{ t.clear_confirm }}')) {
+            JarOfJoy.deleteSpark(currentSparkId);
+            closeModal();
+            loadCollection();
+        }
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
+{% endblock %}

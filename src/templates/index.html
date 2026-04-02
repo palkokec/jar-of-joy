@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t.site_title }} - {{ t.dashboard_title }}{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block content %}
+<div class="container dashboard-container">
+    <!-- Hero Section with Daily Quote -->
+    <section class="hero-section">
+        <div class="pure-g">
+            <div class="pure-u-1 pure-u-md-2-3">
+                <p class="section-label">{{ t.today_reflection }}</p>
+                <blockquote class="daily-quote">
+                    <p class="quote-text">"{{ daily_quote.quote }}"</p>
+                    <cite class="quote-author">— {{ daily_quote.author }}</cite>
+                </blockquote>
+            </div>
+            <div class="pure-u-1 pure-u-md-1-3">
+                <div class="spark-counter">
+                    <span class="counter-number" id="sparkCount">0</span>
+                    <span class="counter-label">{{ t.sparks_collected }}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Jar Visualization Section -->
+    <section class="jar-section">
+        <div class="pure-g">
+            <div class="pure-u-1 pure-u-lg-1-2">
+                <div class="jar-container">
+                    <div class="jar-glow"></div>
+                    <div class="jar">
+                        <div class="jar-lid"></div>
+                        <div class="jar-body">
+                            <div class="jar-fill" id="jarFill">
+                                <!-- Floating sparks will be added dynamically -->
+                                <div class="spark spark-1"></div>
+                                <div class="spark spark-2"></div>
+                                <div class="spark spark-3"></div>
+                                <div class="spark spark-4"></div>
+                                <div class="spark spark-5"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pure-u-1 pure-u-lg-1-2">
+                <div class="jar-info">
+                    <div class="info-card">
+                        <h2 class="jar-status" id="jarStatus">{{ t.jar_status.replace('{percent}', '0') }}</h2>
+                        <p class="jar-description">{{ t.jar_description }}</p>
+                        <a href="add_{{ current_lang }}.html" class="btn btn-primary btn-large">
+                            <span class="material-symbols-outlined">auto_awesome</span>
+                            {{ t.add_spark_button }}
+                        </a>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="material-symbols-outlined stat-icon">calendar_today</span>
+                            <p class="stat-label">{{ t.streak_label }}</p>
+                            <p class="stat-value" id="streakDays">0 {{ t.streak_days.replace('{days}', '') }}</p>
+                        </div>
+                        <div class="stat-card">
+                            <span class="material-symbols-outlined stat-icon">favorite</span>
+                            <p class="stat-label">{{ t.joy_level_label }}</p>
+                            <p class="stat-value">{{ t.joy_level_value }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Sparks Section -->
+    <section class="recent-section">
+        <div class="section-header">
+            <h2 class="section-title">{{ t.recent_sparks }}</h2>
+            <a href="collection_{{ current_lang }}.html" class="link-primary">
+                {{ t.view_collection }} →
+            </a>
+        </div>
+        
+        <div id="recentSparks" class="sparks-grid">
+            <!-- Recent sparks will be loaded dynamically -->
+            <div class="empty-state">
+                <span class="material-symbols-outlined empty-icon">auto_awesome</span>
+                <p>{{ t.no_sparks }}</p>
+                <a href="add_{{ current_lang }}.html" class="btn btn-secondary">
+                    {{ t.add_spark_button }}
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Dashboard specific JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+        loadDashboard();
+    });
+
+    function loadDashboard() {
+        const sparks = JarOfJoy.getSparks();
+        const sparkCount = sparks.length;
+        
+        // Update spark count
+        document.getElementById('sparkCount').textContent = sparkCount;
+        
+        // Update jar fill percentage
+        const maxSparks = 100;
+        const fillPercent = Math.min((sparkCount / maxSparks) * 100, 100);
+        const jarFill = document.getElementById('jarFill');
+        jarFill.style.height = fillPercent + '%';
+        
+        // Update jar status text
+        const jarStatus = document.getElementById('jarStatus');
+        jarStatus.textContent = '{{ t.jar_status }}'.replace('{percent}', Math.round(fillPercent));
+        
+        // Calculate streak
+        const streak = JarOfJoy.calculateStreak();
+        document.getElementById('streakDays').textContent = streak + ' {{ t.streak_days.replace("{days}", "") }}';
+        
+        // Load recent sparks
+        loadRecentSparks(sparks);
+    }
+
+    function loadRecentSparks(sparks) {
+        const container = document.getElementById('recentSparks');
+        
+        if (sparks.length === 0) {
+            return; // Show empty state
+        }
+        
+        container.innerHTML = '';
+        
+        // Get last 3 sparks
+        const recentSparks = sparks.slice(-3).reverse();
+        
+        recentSparks.forEach(spark => {
+            const sparkCard = createSparkCard(spark);
+            container.appendChild(sparkCard);
+        });
+    }
+
+    function createSparkCard(spark) {
+        const card = document.createElement('div');
+        card.className = 'spark-card';
+        
+        const date = new Date(spark.timestamp);
+        const formattedDate = date.toLocaleDateString('{{ lang }}', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        const typeIcons = {
+            memory: 'photo_camera',
+            quote: 'format_quote',
+            gratitude: 'favorite',
+            achievement: 'emoji_events'
+        };
+        
+        card.innerHTML = `
+            <div class="spark-card-header">
+                <span class="spark-date">${formattedDate}</span>
+                <span class="material-symbols-outlined spark-type-icon">${typeIcons[spark.type] || 'auto_awesome'}</span>
+            </div>
+            <p class="spark-content">${escapeHtml(spark.content)}</p>
+        `;
+        
+        return card;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
+{% endblock %}
